@@ -1,0 +1,63 @@
+
+$OUTPUT_FILE_PATH,$OUTPUTFILENAME;  //runDataStageExport
+
+my $FTP_HOST,$FTP_USERNAME,$FTP_PASSWORD,
+$FTP_DEST_PATH,$FTP_LOCAL_PATH,
+$FTP_FILENAME ,$COMPLETEFILE_NAME,$FTP_TO_COMPLETEFILE;
+
+            # PUT action  //
+        $FTP_TO_HOST = "appftp03";
+        $FTP_TO_USERNAME = "relay42desftp";
+        $FTP_TO_PASSWORD = "";
+        $FTP_TO_DEST_PATH = "output";
+        $FTP_TO_LOCAL_PATH = "${FILE_PATH}";
+        $FTP_TO_FILENAME = "${FILE_NAME_2}";
+        $FTP_TO_COMPLETEFILE = "${COMPLETE_NAME_2}";
+
+		set host "appftp03"
+		set uid "relay42desftp"
+		set passwd "2w34esSE$#W@"
+		set port ""
+		set sftp "/usr/bin/sftp"
+		set destpath "output"
+		set timeout 60
+		set uploadfile [lindex $argv 0]
+		
+		
+        my $FILE_PATH = "/opt/etl/output/RPT/${etlvar::ETLJOBNAME}/";  //
+        my $FILE_NAME = "unload_relay42_list.dat.$PROCESS_DATE";  //
+        my $COMPLETE_NAME = "unload_relay42_list.dat.$PROCESS_DATE.complete";
+
+        $OUTPUTFILENAME = "${FILE_PATH}${FILE_NAME}";  //runDataStageExport
+        $COMPLETEFILE_NAME = "${FILE_PATH}${COMPLETE_NAME}";
+
+        $FILE_PATH = "/opt/etl/output/RPT/${etlvar::ETLJOBNAME}/";  //
+        my $FILE_NAME = "unload_relay42_list.dat.$PROCESS_DATE";  //
+         $FILE_NAME_2 = "unload_relay42_list_$PROCESS_DATE.csv";//convert_to_newfile>>RELAY42_GEN_FILE2.pl
+         $FILE_NAME_3 = "unload_relay42_list_$PROCESS_DATE.csv.gpg";//check_All_Files  uploadFile
+       
+   	    my $COMPLETE_NAME   = "unload_relay42_list.dat.$PROCESS_DATE.complete";
+        $COMPLETE_NAME_2 = "unload_relay42_list_$PROCESS_DATE.complete";  //uploadFile_complete
+		
+        $OUTPUTFILENAME = "${FILE_PATH}${FILE_NAME}";  //convert_to_newfile
+        $OUTPUTFILENAME_2 = "${FILE_PATH}${FILE_NAME_2}";  //convert_to_newfile
+		
+        $COMPLETEFILE_NAME = "${FILE_PATH}${COMPLETE_NAME}";
+        $COMPLETEFILE_NAME_2 = "${FILE_PATH}${COMPLETE_NAME_2}";  //uploadFile_2
+
+		
+runSQLPLUS();
+initParam();
+runDataStageExport();
+
+convert_to_newfile();
+processFile();
+check_All_Files("${FILE_NAME_2}");
+
+$ret = system("touch $COMPLETEFILE_NAME_2");
+
+uploadFile();
+uploadFile_complete();
+
+
+vergical
